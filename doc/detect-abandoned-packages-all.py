@@ -10,12 +10,33 @@ import lxml.html
 
 # FIXME: this is listing virtual packages, e.g. arpd
 # FIXME: sometimes has wrong source package, e.g. autoconf-doc
-def get_packages():
+# UPDATE: both problems were because dpkg can't "see" apt data -- duh!
+#         So ${source:Package} was correct for INSTALLED packages, but
+#         WRONG for not-installed packages.
+#         Cf. ${Source} which is sometimes empty, but never wrong.
+def get_packages_DUMB():
     acc = collections.defaultdict(set)
     stdout = subprocess.check_output(
         ['dpkg-query', '--show',
          '--showformat=${source:Package}\t${binary:Package}\n',
          '*'],
+        text=True)
+    for line in sorted(stdout.splitlines()):
+        source_package, binary_package = line.split()
+        acc[source_package].add(binary_package)
+    return {
+        k: ' '.join(sorted(v))
+        for k, v in acc.items()}
+
+
+# Just use aptitude because ICBF learning a better API today.
+def get_packages():
+    acc = collections.defaultdict(set)
+    stdout = subprocess.check_output(
+        ['aptitude', 'search',
+         '--disable-columns',
+         '--display-format', '%e %p',
+         '?not(?virtual)'],
         text=True)
     for line in sorted(stdout.splitlines()):
         source_package, binary_package = line.split()
