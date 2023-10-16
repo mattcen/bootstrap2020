@@ -194,13 +194,13 @@ def parse_crid(event_obj, kind, fallback_value):
 def get_programmes(obj):
     programmes = []             # ACCUMULATOR
     for eit_obj in obj.xpath('/EIT'):
-        service_id = int(exactly_one(eit_obj.xpath('./@service_id')))
+        service_id = int(eit_obj.get('service_id'))
         for event_obj in obj.xpath('./EVENT'):
             start = datetime.datetime.fromisoformat(
-                exactly_one(event_obj.xpath('./@start_time_dec'))
+                event_obj.get('start_time_dec')
                 .replace(' UTC', '+00:00'))  # Appease fromisoformat
             duration = datetime.timedelta(seconds=int(
-                exactly_one(event_obj.xpath('./@duration'))))
+                event_obj.get('duration')))
             title = exactly_one(
                 event_obj.xpath('./DESC/SHORT_EVENT_DESC/@event_name'))
             programmes.append({
