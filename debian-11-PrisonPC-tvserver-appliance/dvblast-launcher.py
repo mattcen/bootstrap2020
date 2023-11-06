@@ -47,11 +47,14 @@ pathlib.Path('dvblast.conf').write_text(f'10.0.0.1:{port} 1 *\n')
 # NOTE: exec(2) (not check_call or run) so
 #       the wrapper process goes away, and
 #       the process tree look tidier.
+#
+# UPDATE: actually don't, because fucking systemd then mis-labels the process as "dvblast-launcher".
 os.execvp(
     'dvblast',
     ['dvblast',
      '--adapter', str(args.adapter),
      '--frequency', str(frequency),
+     '--bandwidth', '7',  # DVB-T in Australia uses 7MHz-wide channels
      '--dvb-compliance',
      '--epg-passthrough',
      '--config-file', 'dvblast.conf',

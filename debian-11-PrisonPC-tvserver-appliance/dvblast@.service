@@ -8,9 +8,8 @@ DynamicUser=yes
 User=tvserver
 Group=video
 RuntimeDirectory=dvblast@%i
-ExecStartPre=touch "/dvblast.conf"
-ExecStart=dvblast-wrapper --adapter=%i
-WorkingDirectory=${RUNTIME_DIRECTORY}
+WorkingDirectory=/run/dvblast@%i
+ExecStart=dvblast-launcher --adapter=%i
 
 
 # FIXME: remove these?
