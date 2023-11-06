@@ -1,0 +1,10 @@
+#!/bin/bash -x
+args=(
+    ./debian-11-main.py --remove --netboot --template=desktop-inmate --boot --destdir /output
+)
+(( $# )) && args=("$@")
+
+#docker run --rm --cap-add SYS_ADMIN -v apt_cache:/var/cache/apt-cacher-ng -v "$PWD"/output:/output -it mattcen/bootstrap2020 ./debian-11-main.py --backdoor --boot --destdir /output
+#docker run --rm --cap-add=SYS_ADMIN --volume=apt_cache:/var/cache/apt-cacher-ng --volume="$PWD"/output:/output -it mattcen/bootstrap2020 ./debian-11-main.py --remove --netboot --template=desktop-inmate --boot --destdir /output
+#docker run --rm -it --cap-add=SYS_ADMIN --network=apt-cacher-ng_docker_default --volume="$PWD"/output:/tmp/bootstrap2020 mattcen/bootstrap2020 "${args[@]}"
+docker run --rm -it --cap-add SYS_ADMIN --network=apt-cacher-ng_docker_default --volume="$PWD"/output:/tmp/bootstrap2020 --volume="$PWD":/build mattcen/bootstrap2020 "${args[@]}"
